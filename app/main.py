@@ -123,10 +123,9 @@ def main():
                     path = args["file_path"]
                     content = args["content"]
 
-                    if os.path.exists(path):
-                        with open(path, "w", encoding="utf-8") as f:
-                            result = f.write(content)
-                    
+                    with open(path, "w", encoding="utf-8") as f:
+                        result = f.write(content)
+                
                     messages.append(
                         {
                             "role": "tool",
