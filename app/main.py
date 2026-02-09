@@ -59,7 +59,7 @@ def main():
         match type:
             case "Read":
                 # Parse arguments
-                args = json.load(tool_call.function.arguments)
+                args = json.loads(tool_call.function.arguments)
                 # Get path and read file contents
                 path = args.file_path
 
