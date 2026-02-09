@@ -124,7 +124,7 @@ def main():
                     content = args["content"]
 
                     if os.path.exists(path):
-                        with open(path, "w+", encoding="utf-8") as f:
+                        with open(path, "w", encoding="utf-8") as f:
                             result = f.write(content)
                     
                     messages.append(
