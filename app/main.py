@@ -146,7 +146,7 @@ def main():
                     )
                 case "Bash":
                     cmd = args["command"]
-                    res = subprocess.run(cmd, capture_output=True)
+                    res = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=False)
                     messages.append(
                         {"role": "tool", "tool_call_id": tool_call.id, "content": res}
                     )
