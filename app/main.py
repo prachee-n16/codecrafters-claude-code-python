@@ -130,7 +130,7 @@ def main():
                         {
                             "role": "tool",
                             "tool_call_id": tool_call.id,
-                            "content": result
+                            "content": "OK"
                         }
                     )
 
