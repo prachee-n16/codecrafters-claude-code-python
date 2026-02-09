@@ -1,10 +1,3 @@
-
-----
-
-[![progress-banner](https://backend.codecrafters.io/progress/claude-code/02476b7d-5420-4f81-a934-254b247ebaa8)](https://app.codecrafters.io/users/prachee-n16?r=2qF)
-
-This is a starting point for Python solutions to the
-["Build Your own Claude Code" Challenge](https://codecrafters.io/challenges/claude-code).
 This repo contains my Python solution for the CodeCrafters
 ["Build Your own Claude Code" Challenge](https://codecrafters.io/challenges/claude-code).
 
