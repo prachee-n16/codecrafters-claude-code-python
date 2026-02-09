@@ -74,6 +74,7 @@ def main():
                     continue
         
         chat = call_llm(client, messages)
+        msg = chat.choices[0].message
         messages.append(msg)
             
     print(chat.choices[0].message.content) 
