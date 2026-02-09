@@ -48,7 +48,7 @@ def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
     print("Logs from your program will appear here!", file=sys.stderr)
 
-    # print(chat.choices[0].message.content)
+    print(chat.choices[0].message.content)
 
     # Detect tool calls in response
     msg = chat.choices[0].message 
@@ -62,8 +62,11 @@ def main():
                 args = json.loads(tool_call.function.arguments)
                 # Get path and read file contents
                 path = args["file_path"]
-                f = open(path)
-                print(f.read())
+
+                if os.path.exists(path):
+                    f = open(path)
+                    print(f.read())
+                return
 
 if __name__ == "__main__":
     main()
