@@ -7,20 +7,10 @@ from openai import OpenAI
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 BASE_URL = os.getenv("OPENROUTER_BASE_URL", default="https://oxpenrouter.ai/api/v1")
 
-
-def main():
-    p = argparse.ArgumentParser()
-    p.add_argument("-p", required=True)
-    args = p.parse_args()
-
-    if not API_KEY:
-        raise RuntimeError("OPENROUTER_API_KEY is not set")
-
-    client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
-
+def call_llm(client, messages):
     chat = client.chat.completions.create(
         model="anthropic/claude-haiku-4.5",
-        messages=[{"role": "user", "content": args.p}],
+        messages=messages,
         tools=[
             {
                 "type": "function",
@@ -42,6 +32,22 @@ def main():
         ],
     )
 
+    return chat
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("-p", required=True)
+    args = p.parse_args()
+
+    if not API_KEY:
+        raise RuntimeError("OPENROUTER_API_KEY is not set")
+
+    client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
+    # store conversation history
+    messages = [{"role": "user", "content": args.p}]
+    
+    chat = call_llm(client, messages)
+
     if not chat.choices or len(chat.choices) == 0:
         raise RuntimeError("no choices in response")
 
@@ -50,21 +56,25 @@ def main():
     
     # Detect tool calls in response
     msg = chat.choices[0].message
-    if msg.tool_calls:
-        tool_call = msg.tool_calls[0] 
-        type = tool_call.function.name
+    # Append AI response
+    messages.append(msg)
+    while msg.tool_calls:
+        for tool_call in msg.tool_calls:
+            type = tool_call.function.name
+            match type:
+                case "Read":
+                    # Parse arguments
+                    args = json.loads(tool_call.function.arguments)
+                    # Get path and read file contents
+                    path = args["file_path"]
 
-        match type:
-            case "Read":
-                # Parse arguments
-                args = json.loads(tool_call.function.arguments)
-                # Get path and read file contents
-                path = args["file_path"]
-
-                if os.path.exists(path):
-                    f = open(path)
-                    print(f.read())
-                return
+                    if os.path.exists(path):
+                        f = open(path)
+                        print(f.read())
+                    continue
+        
+        chat = call_llm(client, messages)
+        messages.append(msg)
             
     print(chat.choices[0].message.content) 
 
