@@ -62,12 +62,8 @@ def main():
                 args = json.loads(tool_call.function.arguments)
                 # Get path and read file contents
                 path = args["file_path"]
-
-                if os.path.exists(path):
-                    f = open(path)
-                    print(f.read())
-
-
+                f = open(path)
+                print(f.read())
 
 if __name__ == "__main__":
     main()
