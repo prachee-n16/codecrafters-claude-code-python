@@ -65,9 +65,8 @@ def main():
                     f = open(path)
                     print(f.read())
                 return
-            case _:
-                print(chat.choices[0].message.content) 
-
+            
+    print(chat.choices[0].message.content) 
 
 if __name__ == "__main__":
     main()
