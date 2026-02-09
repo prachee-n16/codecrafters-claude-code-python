@@ -51,7 +51,7 @@ def main():
     # Detect tool calls in response
     msg = chat.choices[0].message
     if msg.tool_calls:
-        tool_call = msg.tool_calls[0]
+        tool_call = msg.tool_calls[0] 
         type = tool_call.function.name
 
         match type:
