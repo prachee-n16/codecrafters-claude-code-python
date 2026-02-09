@@ -77,7 +77,6 @@ def main():
                         "tool_call_id": tool_call.id,
                         "content": result,
                     })
-                    continue
         
         chat = call_llm(client, messages)
         msg = chat.choices[0].message
