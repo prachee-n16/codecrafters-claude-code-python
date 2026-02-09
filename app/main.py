@@ -1,5 +1,6 @@
 import argparse
 import os
+import subprocess
 import sys
 import json
 from openai import OpenAI
@@ -42,6 +43,23 @@ TOOLS = [
                         "type": "string",
                         "description": "The content to write to the file",
                     },
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "Bash",
+            "description": "Execute a shell command",
+            "parameters": {
+                "type": "object",
+                "required": ["command"],
+                "properties": {
+                    "command": {
+                        "type": "string",
+                        "description": "The command to execute",
+                    }
                 },
             },
         },
@@ -98,10 +116,9 @@ def main():
 
         for tool_call in msg.tool_calls:
             type = tool_call.function.name
+            args = json.loads(tool_call.function.arguments)
             match type:
                 case "Read":
-                    # Parse arguments
-                    args = json.loads(tool_call.function.arguments)
                     # Get path and read file contents
                     path = args["file_path"]
 
@@ -117,22 +134,23 @@ def main():
                         }
                     )
                 case "Write":
-                    # Parse arguments
-                    args = json.loads(tool_call.function.arguments)
                     # Get path and content
                     path = args["file_path"]
                     content = args["content"]
 
                     with open(path, "w", encoding="utf-8") as f:
                         result = f.write(content)
-                
+
                     messages.append(
-                        {
-                            "role": "tool",
-                            "tool_call_id": tool_call.id,
-                            "content": "OK"
-                        }
+                        {"role": "tool", "tool_call_id": tool_call.id, "content": "OK"}
                     )
+                case "Bash":
+                    cmd = args["command"]
+                    res = subprocess.run(cmd, capture_output=True)
+                    messages.append(
+                        {"role": "tool", "tool_call_id": tool_call.id, "content": res}
+                    )
+
 
     print(chat.choices[0].message.content)
 
