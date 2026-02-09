@@ -49,7 +49,7 @@ def main():
     print("Logs from your program will appear here!", file=sys.stderr)
     
     # Detect tool calls in response
-    msg = chat.choices[0].message 
+    msg = chat.choices[0].message
     if msg.tool_calls:
         tool_call = msg.tool_calls[0]
         type = tool_call.function.name
