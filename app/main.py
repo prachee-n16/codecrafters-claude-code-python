@@ -5,7 +5,7 @@ import json
 from openai import OpenAI
 
 API_KEY = os.getenv("OPENROUTER_API_KEY")
-BASE_URL = os.getenv("OPENROUTER_BASE_URL", default="https://oxpenrouter.ai/api/v1")
+BASE_URL = os.getenv("OPENROUTER_BASE_URL", default="https://openrouter.ai/api/v1")
 
 def call_llm(client, messages):
     chat = client.chat.completions.create(
@@ -57,7 +57,7 @@ def main():
     # Detect tool calls in response
     msg = chat.choices[0].message
     # Append AI response
-    messages.append(msg.content)
+    messages.append({"role": "assistant", "content": msg.content or ""})
     while msg.tool_calls:
         for tool_call in msg.tool_calls:
             type = tool_call.function.name
@@ -69,13 +69,19 @@ def main():
                     path = args["file_path"]
 
                     if os.path.exists(path):
-                        f = open(path)
-                        print(f.read())
+                        with open(path, "r", encoding="utf-8") as f:
+                            result = f.read()
+                    
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": result,
+                    })
                     continue
         
         chat = call_llm(client, messages)
         msg = chat.choices[0].message
-        messages.append(msg.content)
+        messages.append({"role": "assistant", "content": msg.content or ""})
 
     print(chat.choices[0].message.content) 
 
