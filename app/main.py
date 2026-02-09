@@ -54,11 +54,17 @@ def main():
     # You can use print statements as follows for debugging, they'll be visible when running tests.
     print("Logs from your program will appear here!", file=sys.stderr)
     
-    # Detect tool calls in response
-    msg = chat.choices[0].message
-    # Append AI response
-    messages.append({"role": "assistant", "content": msg.content or ""})
-    while msg.tool_calls:
+    while True:
+        # Detect tool calls in response
+        chat = call_llm(client, messages)
+        msg = chat.choices[0].message
+        # Append AI response
+        messages.append({"role": "assistant", "content": msg.content or "", "tool_calls": msg.tool_calls})
+        
+        if not msg.tool_calls:
+            final = msg.content or ""
+            break
+
         for tool_call in msg.tool_calls:
             type = tool_call.function.name
             match type:
@@ -77,10 +83,6 @@ def main():
                         "tool_call_id": tool_call.id,
                         "content": result,
                     })
-        
-        chat = call_llm(client, messages)
-        msg = chat.choices[0].message
-        messages.append({"role": "assistant", "content": msg.content or ""})
 
     print(chat.choices[0].message.content) 
 
