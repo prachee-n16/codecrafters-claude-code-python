@@ -51,7 +51,7 @@ def main():
     # print(chat.choices[0].message.content)
 
     # Detect tool calls in response
-    msg = chat.choices[0].message
+    msg = chat.choices[0].message 
     if msg.tool_calls:
         tool_call = msg.tool_calls[0]
         type = tool_call.function.name
@@ -60,9 +60,8 @@ def main():
             case "Read":
                 # Parse arguments
                 args = json.loads(tool_call.function.arguments)
-                print(args)
                 # Get path and read file contents
-                path = args.file_path
+                path = args["file_path"]
 
                 if os.path.exists(path):
                     f = open(path)
