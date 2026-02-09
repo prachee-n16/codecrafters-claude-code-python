@@ -57,7 +57,7 @@ def main():
     # Detect tool calls in response
     msg = chat.choices[0].message
     # Append AI response
-    messages.append(msg)
+    messages.append(msg.content)
     while msg.tool_calls:
         for tool_call in msg.tool_calls:
             type = tool_call.function.name
@@ -75,8 +75,8 @@ def main():
         
         chat = call_llm(client, messages)
         msg = chat.choices[0].message
-        messages.append(msg)
-            
+        messages.append(msg.content)
+
     print(chat.choices[0].message.content) 
 
 if __name__ == "__main__":
