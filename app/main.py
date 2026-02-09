@@ -60,6 +60,7 @@ def main():
             case "Read":
                 # Parse arguments
                 args = json.loads(tool_call.function.arguments)
+                print(args)
                 # Get path and read file contents
                 path = args.file_path
 
